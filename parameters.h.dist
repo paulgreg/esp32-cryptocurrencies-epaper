@@ -1,0 +1,13 @@
+#define WIFI_SSID  "SSID"
+#define WIFI_PASSWORD "PASSWORD"
+
+#define URL_CRYPTOCURRENCIES_STATUS "https://url-to-your-cryptocurrencies-amount/status.json"
+#define LOGIN "login"
+#define PASSWORD "password"
+
+#define USER_1_NICKNAME "User 1"
+#define USER_2_NICKNAME "User 2"
+
+#define URL_COINMARKETCAP_QUOTES "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=BTC,ETH&convert=EUR"
+#define COINMARKETCAP_API_HEADER "X-CMC_PRO_API_KEY"
+#define COINMARKETCAP_API_KEY "your-api-key"
