@@ -1,3 +1,8 @@
+#include "icons/btc.h"
+#include "icons/eth.h"
+#include "icons/arrow_up.h"
+#include "icons/arrow_down.h"
+
 void drawText(int x, int y, char* text, int color) {
   display.setFont(&FreeMonoBold12pt7b);
   display.setTextColor(color);
@@ -19,41 +24,61 @@ void drawSmallText(int x, int y, char* text, int color) {
   display.println(text);
 }
 
-void displayNickNames (int y, char* nickname1, int x1, char* nickname2, int x2) {
-  drawText(x1, y, nickname1, GxEPD_RED);
-  drawText(x2, y, nickname2, GxEPD_RED);
+void displayTrend(int x, int y, char* label, double trend) {
+  drawTinyText(x, y, label, GxEPD_BLACK);
+  boolean up = trend > 0;
+  display.drawBitmap(x + 15, y - 16, up ? arrow_up_bits : arrow_down_bits, 16, 17, up ? GxEPD_BLACK : GxEPD_RED);
 }
 
-void displayCryptocurrencies(int x, char* cryptocurrency1, int y1, char* cryptocurrency2, int y2) {
-  drawSmallText(x, y1, cryptocurrency1, GxEPD_RED);
-  drawSmallText(x, y2, cryptocurrency2, GxEPD_RED);
+void displayTrends(int x, int y, Price price) {
+  char euroAmountStr[20];
+  sprintf(euroAmountStr, "%.0f eur", price.price);
+  drawTinyText(x + 6, y, euroAmountStr, GxEPD_BLACK);
+  displayTrend(x + 125, y, "d", price.percent_change_24h);
+  displayTrend(x + 165, y, "w", price.percent_change_7d);
+  displayTrend(x + 205, y, "m", price.percent_change_30d);
 }
 
 void displayPrice(int x, int y, double currencyAmount, double euroPrice) {
   int baseX = x;
   int baseY = y;
   char currentAmountStr[10];
-  sprintf(currentAmountStr, "%.6f", currencyAmount);
-  Serial.printf("currentAmountStr: %s\n", currentAmountStr);
   char euroAmountStr[20];
-  sprintf(euroAmountStr, "%.0f eur", currencyAmount * euroPrice);
-  Serial.printf("euroAmountStr: %s\n", euroAmountStr);
+  sprintf(currentAmountStr, "%.6f", currencyAmount);
+  double euroAmount = currencyAmount * euroPrice;
+  sprintf(euroAmountStr, euroAmount > 1000 ? "%.0f eur" : "%.2f eur", euroAmount);
 
-  drawSmallText(baseX, baseY, currentAmountStr, GxEPD_BLACK);
+  drawTinyText(baseX, baseY, currentAmountStr, GxEPD_BLACK);
   drawSmallText(baseX, baseY + 20, euroAmountStr, GxEPD_BLACK);
 }
 
+void displayCurrenciesLogos(int yBtc, int yEth) {
+  display.drawBitmap(6, yBtc, btc_bits, 32, 32, GxEPD_BLACK);
+  display.drawBitmap(6, yEth, eth_bits, 32, 32, GxEPD_BLACK);
+}
+
+void displayLastUpdated(int x, int y, char* lastUpdated) {
+  drawTinyText(x, y, lastUpdated, GxEPD_BLACK);
+}
+  
 void displayData(Amounts* amounts, Prices* prices) {
   display.fillScreen(GxEPD_WHITE);
   display.firstPage();
   do {
-    displayNickNames(20, USER_1_NICKNAME, 60, USER_2_NICKNAME, 180);
-    displayCryptocurrencies(4, "BTC", 60, "ETH", 120);
-    displayPrice(50, 50, amounts->btc[0], prices->btc.price);
-    displayPrice(160, 50, amounts->btc[1], prices->btc.price);
-    displayPrice(50, 120, amounts->eth[0], prices->eth.price);
-    displayPrice(160, 120, amounts->eth[1], prices->eth.price);
-} while (display.nextPage());
+
+    displayCurrenciesLogos(20, 100);
+
+    displayPrice(50, 25, amounts->btc[0], prices->btc.price);
+    displayPrice(160, 25, amounts->btc[1], prices->btc.price);
+    displayTrends(10, 70, prices->btc);
+
+    displayPrice(50, 105, amounts->eth[0], prices->eth.price);
+    displayPrice(160, 105, amounts->eth[1], prices->eth.price);
+    displayTrends(10, 150, prices->eth);
+
+    displayLastUpdated(85, 172, prices->eth.last_updated);
+
+  } while (display.nextPage());
 }
 
 void displayCenteredText(char* text) {

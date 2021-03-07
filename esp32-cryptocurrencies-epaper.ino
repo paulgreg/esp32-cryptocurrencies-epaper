@@ -42,6 +42,8 @@ Amounts amounts;
 Prices prices;
 
 void loop() {
+  uint64_t sleepTime = HOUR;
+  
   if (!connectToWifi()) {
     displayCenteredText("Can’t connect to wifi");
   } else {
@@ -64,12 +66,12 @@ void loop() {
         displayCenteredText("Error parsing prices JSON");
       } else {
         displayData(&amounts, &prices);
+        if (prices.eth.last_updated[11] == '0' && prices.eth.last_updated[12] == '0') sleepTime = HOUR * 6; // sleep for the night
       }
     }
     disconnectFromWifi();
   }
 
-  uint64_t sleepTime = DAY + 10 * MINUTE;
   sleep(sleepTime);
 
   Serial.println("After sleep, that line should never be printed");
