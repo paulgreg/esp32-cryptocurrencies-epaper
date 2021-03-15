@@ -24,7 +24,7 @@ void drawSmallText(int x, int y, char* text, int color) {
 void displayTrend(int x, int y, char* label, double trend) {
   drawTinyText(x, y, label, GxEPD_BLACK);
   boolean up = trend > 0;
-  display.drawBitmap(x + 15, y - 16, up ? arrow_up_bits : arrow_down_bits, 16, 17, up ? GxEPD_BLACK : GxEPD_RED);
+  display.drawBitmap(x + 15, y - 16, up ? arrow_up_bits : arrow_down_bits, 16, 17, up ? GxEPD_RED : GxEPD_BLACK);
 }
 
 void displayTrends(int x, int y, Price price) {
