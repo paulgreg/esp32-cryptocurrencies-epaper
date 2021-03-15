@@ -1,6 +1,5 @@
-#include <Fonts/FreeMono9pt7b.h>
-#include <Fonts/FreeMonoBold9pt7b.h>
-#include <Fonts/FreeMonoBold12pt7b.h>
+#include "Fonts/FreeArial12full.h"
+#include "Fonts/FreeArial_Bold12full.h"
 
 #include "icons/btc.h"
 #include "icons/eth.h"
@@ -8,14 +7,14 @@
 #include "icons/arrow_down.h"
 
 void drawTinyText(int x, int y, char* text, int color) {
-  display.setFont(&FreeMono9pt7b);
+  display.setFont(&FreeArial12full);
   display.setTextColor(color);
   display.setCursor(x, y);
   display.println(text);
 }
 
 void drawSmallText(int x, int y, char* text, int color) {
-  display.setFont(&FreeMonoBold9pt7b);
+  display.setFont(&FreeArial_Bold12full);
   display.setTextColor(color);
   display.setCursor(x, y);
   display.println(text);
@@ -29,7 +28,7 @@ void displayTrend(int x, int y, char* label, double trend) {
 
 void displayTrends(int x, int y, Price price) {
   char euroAmountStr[20];
-  sprintf(euroAmountStr, "%.0f eur", price.price);
+  sprintf(euroAmountStr, "%.0f \x80", price.price);
   drawTinyText(x + 6, y, euroAmountStr, GxEPD_BLACK);
   displayTrend(x + 125, y, "d", price.percent_change_24h);
   displayTrend(x + 165, y, "w", price.percent_change_7d);
@@ -43,7 +42,7 @@ void displayPrice(int x, int y, double currencyAmount, double euroPrice) {
   char euroAmountStr[20];
   sprintf(currentAmountStr, "%.6f", currencyAmount);
   double euroAmount = currencyAmount * euroPrice;
-  sprintf(euroAmountStr, euroAmount > 100 ? "%.0f eur" : "%.2f eur", euroAmount);
+  sprintf(euroAmountStr, euroAmount > 100 ? "%.0f \x80" : "%.2f \x80", euroAmount);
 
   drawTinyText(baseX, baseY, currentAmountStr, GxEPD_BLACK);
   drawSmallText(baseX, baseY + 20, euroAmountStr, GxEPD_BLACK);
@@ -78,36 +77,19 @@ void displayData(Amounts* amounts, Prices* prices) {
 }
 
 void displayCenteredText(char* text) {
-  display.setFont(&FreeMonoBold9pt7b);
+  display.setFont(&FreeArial_Bold12full);
   display.setTextColor(GxEPD_BLACK);
-  int16_t tbx, tby; uint16_t tbw, tbh; // boundary box window
-  display.getTextBounds(text, 0, 0, &tbx, &tby, &tbw, &tbh); // it works for origin 0, 0, fortunately (negative tby!)
-  // center bounding box by transposition of origin:
+  int16_t tbx, tby; uint16_t tbw, tbh;
+  display.getTextBounds(text, 0, 0, &tbx, &tby, &tbw, &tbh);
   uint16_t x = ((display.width() - tbw) / 2) - tbx;
   uint16_t y = ((display.height() - tbh) / 2) - tby;
-  // full window mode is the initial mode, set it anyway
   display.setFullWindow();
-  // here we use paged drawing, even if the processor has enough RAM for full buffer
-  // so this can be used with any supported processor board.
-  // the cost in code overhead and execution time penalty is marginal
-  // tell the graphics class to use paged drawing mode
   display.firstPage();
   do
   {
-    // this part of code is executed multiple times, as many as needed,
-    // in case of full buffer it is executed once
-    // IMPORTANT: each iteration needs to draw the same, to avoid strange effects
-    // use a copy of values that might change, don't read e.g. from analog or pins in the loop!
-    display.fillScreen(GxEPD_WHITE); // set the background to white (fill the buffer with value for white)
-    display.setCursor(x, y); // set the postition to start printing text
-    display.print(text); // print some text
-    // end of part executed multiple times
+    display.fillScreen(GxEPD_WHITE);
+    display.setCursor(x, y);
+    display.print(text);
   }
-  // tell the graphics class to transfer the buffer content (page) to the controller buffer
-  // the graphics class will command the controller to refresh to the screen when the last page has been transferred
-  // returns true if more pages need be drawn and transferred
-  // returns false if the last page has been transferred and the screen refreshed for panels without fast partial update
-  // returns false for panels with fast partial update when the controller buffer has been written once more, to make the differential buffers equal
-  // (for full buffered with fast partial update the (full) buffer is just transferred again, and false returned)
   while (display.nextPage());
 }
