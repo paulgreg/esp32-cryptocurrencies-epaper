@@ -65,12 +65,14 @@ boolean fillPricesFromJson(JSONVar json, Prices* prices) {
   prices->btc.percent_change_7d = (double) json["data"]["BTC"]["quote"]["EUR"]["percent_change_7d"];
   prices->btc.percent_change_24h = (double) json["data"]["BTC"]["quote"]["EUR"]["percent_change_24h"];
   sprintf(prices->btc.last_updated, "%s", (const char*) json["data"]["BTC"]["quote"]["EUR"]["last_updated"]);
+  prices->btc.last_updated[16] = 0;
 
   prices->eth.price = (double) json["data"]["ETH"]["quote"]["EUR"]["price"];
   prices->eth.percent_change_30d = (double) json["data"]["ETH"]["quote"]["EUR"]["percent_change_30d"];
   prices->eth.percent_change_7d = (double) json["data"]["ETH"]["quote"]["EUR"]["percent_change_7d"];
   prices->eth.percent_change_24h = (double) json["data"]["ETH"]["quote"]["EUR"]["percent_change_24h"];
   sprintf(prices->eth.last_updated, "%s", (const char*) json["data"]["ETH"]["quote"]["EUR"]["last_updated"]);
+  prices->eth.last_updated[16] = 0;
 
   return true;
 }
