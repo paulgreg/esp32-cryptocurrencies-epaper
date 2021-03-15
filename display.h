@@ -43,7 +43,7 @@ void displayPrice(int x, int y, double currencyAmount, double euroPrice) {
   char euroAmountStr[20];
   sprintf(currentAmountStr, "%.6f", currencyAmount);
   double euroAmount = currencyAmount * euroPrice;
-  sprintf(euroAmountStr, euroAmount > 1000 ? "%.0f eur" : "%.2f eur", euroAmount);
+  sprintf(euroAmountStr, euroAmount > 100 ? "%.0f eur" : "%.2f eur", euroAmount);
 
   drawTinyText(baseX, baseY, currentAmountStr, GxEPD_BLACK);
   drawSmallText(baseX, baseY + 20, euroAmountStr, GxEPD_BLACK);
@@ -62,7 +62,6 @@ void displayData(Amounts* amounts, Prices* prices) {
   display.fillScreen(GxEPD_WHITE);
   display.firstPage();
   do {
-
     displayCurrenciesLogos(20, 100);
 
     displayPrice(50, 25, amounts->btc[0], prices->btc.price);
