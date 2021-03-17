@@ -42,7 +42,7 @@ void loop() {
   uint64_t sleepTime = HOUR;
   
   if (!connectToWifi()) {
-    displayCenteredText("Can’t connect to wifi");
+    displayCenteredText("Can't connect to wifi");
   } else {
     String statusStr = getBasicAuthJSON(URL_CRYPTOCURRENCIES_STATUS, LOGIN, PASSWORD);
     jsonStatus = JSON.parse(statusStr);
