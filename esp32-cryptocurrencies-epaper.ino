@@ -39,7 +39,7 @@ Amounts amounts;
 Prices prices;
 
 void loop() {
-  uint64_t sleepTime = HOUR;
+  uint64_t sleepTime = 6 * HOUR;
   
   if (!connectToWifi()) {
     displayCenteredText("Can't connect to wifi");
@@ -63,7 +63,6 @@ void loop() {
         displayCenteredText("Error parsing prices JSON");
       } else {
         displayData(&amounts, &prices);
-        if (prices.eth.last_updated[11] == '0' && prices.eth.last_updated[12] == '0') sleepTime = HOUR * 6; // sleep for the night
       }
     }
     disconnectFromWifi();
